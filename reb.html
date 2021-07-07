@@ -1,0 +1,121 @@
+
+<html class="cxnt48">
+
+    <head>
+
+        <title>REB v3.0</title>
+
+
+
+
+        <script type="text/javascript" language="Javascript">
+           var itsmobile_eos = "/sap(cz1TSUQlM2FBTk9OJTNhczRoc3J2ci11YWVfR0VQXzAyJTNhSTdZQWNXUXJ2Z0lzeFZWZERTeUppMERzRTNnZDNSRlgxU0lyY3pEWS1BVFQ=)/bc/gui/sap/its/znesto/~flNUQVRFPTEwNjM0ODc1MDIuMDEyLjA0LjA0?~okcode=%2fnex";
+		   var ws;
+		   var devinfo;
+		   var resws;
+		   var devip;
+		   
+		   var ssesource = new EventSource("https://cxnt48.com/rebdash");
+			ssesource.onmessage = function(event) {
+			 console.log( event.data );
+			 document.getElementById("reb_in_one").value = event.data;
+			};
+			ssesource.onerror = function(err) {
+			  console.error("EventSource failed:", err);
+			  document.getElementById("reb_in_two").value = event.data;
+			};
+			
+		   
+		   (function() {
+		   
+				getip();
+				
+
+				
+				var checkReady = function(callback) {
+					if (window.EB) {
+						callback(EB);
+					}
+					else {
+						
+						window.setTimeout(function() { checkReady(callback); }, 100); 
+					}
+				};
+				
+
+				checkReady(function(EB) {
+					console.log("UUID:"+EB.System.uuid);
+					console.log("phId:"+EB.System.phoneId);
+					console.log("OS:"+EB.System.osVersion);
+					console.log("OEM:"+EB.System.oemInfo);
+					console.log("locale:"+EB.System.locale);
+					console.log("country:"+EB.System.country);
+					console.log("webview:"+EB.System.webviewFramework);
+					devinfo = "IP:"+devip+" OEM:"+EB.System.oemInfo+" OS:"+EB.System.osVersion+" UUID:"+EB.System.uuid+" phId:"+EB.System.phoneId+" loc/cc:"+EB.System.locale+"-"+EB.System.country+" webview:"+EB.System.webviewFramework;
+					dump(devinfo);
+					/*
+					ws = new WebSocket('wss://'+window.location.hostname+':33748/rebdash');  //wss://cxnt48.com:33748/rebdash
+						ws.onopen = function(event){
+							ws.send("REB|ip="+devip+" info="+devinfo+"");
+						}
+						ws.onmessage = function(event){
+							var resws = event.data;
+							console.log(event.data);
+							
+						}
+						*/
+					
+				});
+				
+				function getip(){
+					function text(url) {
+					  return fetch(url).then(res => res.text());
+					}
+
+					text('https://www.cloudflare.com/cdn-cgi/trace').then(data => {
+					  let ipRegex = /[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/
+					  devip = data.match(ipRegex)[0];
+					});	
+				}
+					
+					
+			})();
+		   
+
+
+		  function dump(info){
+		 
+
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", 'https://cxnt48.com/dump', true);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			xhr.onreadystatechange = function() { // Call a function when the state changes.
+				if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					// Request finished. Do processing here.
+				}
+			}
+			xhr.send("who="+info+"&what=com.ndzl.reb&any=..." );
+
+
+		  } 
+		  
+		  dump();
+		   
+        </script>
+		
+
+
+
+    </head>
+    <body>
+
+
+        <input type="text"   id="reb_in_one" name="" value="09876543210"  /> 
+		<br>
+        <input type="text" class="MobileEdit"  id="reb_in_two" name="" value="09876543210"  /> 
+		<br>
+		
+		<input type="button" class="MobileButton" id="reb_bt_one" name="exit[1]" value="Action 1" onclick=""  />
+
+    </body>
+</html>
